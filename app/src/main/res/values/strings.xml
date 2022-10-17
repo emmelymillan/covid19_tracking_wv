@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Vigilancia Covid-19</string>
+    <string name="msg_waiting">Estableciendo conexión</string>
+</resources>
