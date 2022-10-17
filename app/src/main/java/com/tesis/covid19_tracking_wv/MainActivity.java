@@ -22,6 +22,8 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Handler;
 
+import androidx.core.splashscreen.SplashScreen;
+
 public class MainActivity extends AppCompatActivity {
     String ShowOrHideWebViewInitialUse = "show";
     WebView miVisorWeb;
@@ -34,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        SplashScreen.installSplashScreen(this);
         Objects.requireNonNull(getSupportActionBar()).hide();
         setContentView(R.layout.activity_main);
 
