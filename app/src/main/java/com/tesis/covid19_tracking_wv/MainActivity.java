@@ -1,13 +1,23 @@
 package com.tesis.covid19_tracking_wv;
 
+import static android.content.ContentValues.TAG;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import android.annotation.SuppressLint;
+import android.content.BroadcastReceiver;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
+
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Objects;
 
 import android.graphics.Bitmap;
@@ -21,6 +31,7 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Handler;
+import android.widget.Toast;
 
 import androidx.core.splashscreen.SplashScreen;
 
@@ -52,19 +63,69 @@ public class MainActivity extends AppCompatActivity {
 
 //        if (savedInstanceState == null) {
 //            miVisorWeb.loadUrl(url);
-        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+//        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+//        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+//
+//        if (networkInfo != null && networkInfo.isConnected()) {
+//            if (savedInstanceState == null) {
+//                miVisorWeb.loadUrl(url);
+//            }
+//        } else {
+//            vig.setText("Dispositivo sin internet");
+//            spinner.setVisibility(View.VISIBLE);
+//            imag.setImageResource(R.drawable.no_internet);
+//        }
+    }
 
-        if (networkInfo != null && networkInfo.isConnected()) {
-            if (savedInstanceState == null) {
-                miVisorWeb.loadUrl(url);
-            }
-        } else {
-            vig.setText("Dispositivo sin internet");
-            spinner.setVisibility(View.GONE);
-            imag.setImageResource(R.drawable.ic_launcher);
-
+//??????
+    private BroadcastReceiver networkStateReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            ConnectivityManager manager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo ni = manager.getActiveNetworkInfo();
+            onNetworkChange(ni);
         }
+    };
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        registerReceiver(networkStateReceiver, new IntentFilter(android.net.ConnectivityManager.CONNECTIVITY_ACTION));
+    }
+
+    @Override
+    public void onPause() {
+        unregisterReceiver(networkStateReceiver);
+        super.onPause();
+    }
+
+
+    private void onNetworkChange(NetworkInfo networkInfo) {
+        if (networkInfo != null) {
+            if (networkInfo.getState() == NetworkInfo.State.CONNECTED) {
+                // CONNECTED
+                miVisorWeb.loadUrl(url);
+            } else {
+                // DISCONNECTED"
+                vig.setText("Dispositivo sin internet");
+                spinner.setVisibility(View.VISIBLE);
+                imag.setImageResource(R.drawable.no_internet);
+            }
+        }else {
+            // DISCONNECTED"
+            Context context = getApplicationContext();
+            CharSequence text = "Dispositivo sin internet";
+            int duration = Toast.LENGTH_SHORT;
+
+            Toast toast = Toast.makeText(context, text, duration);
+            toast.show();
+     //       String msg;
+ //           Log.i(TAG, msg:"Dispositivo sin internet")
+            vig.setText("Compruebe la conexión");
+//            spinner.setVisibility(View.VISIBLE);
+            imag.setImageResource(R.drawable.no_internet);
+        }
+//..........
     }
 
     // This allows for a splash screen
@@ -97,7 +158,7 @@ public class MainActivity extends AppCompatActivity {
                     vig.setVisibility(View.GONE);
                     view.setVisibility(miVisorWeb.VISIBLE);
                 }
-            }, 5000);
+            }, 2500);
 
                     super.onPageFinished(view, url);
         }
