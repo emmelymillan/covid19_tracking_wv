@@ -1,7 +1,5 @@
 package com.tesis.covid19_tracking_wv;
 
-import static android.content.ContentValues.TAG;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -10,14 +8,9 @@ import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
-
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.Objects;
 
 import android.graphics.Bitmap;
@@ -52,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         miVisorWeb = (WebView) findViewById(R.id.visorWeb);
-        spinner = (ProgressBar)findViewById(R.id.progressBar1);
+        spinner = (ProgressBar) findViewById(R.id.progressBar1);
         miVisorWeb.setWebViewClient(new CustomWebViewClient());
         imag = (ImageView) findViewById(R.id.ImageV);
         vig = (TextView) findViewById(R.id.vigilancia);
@@ -60,30 +53,14 @@ public class MainActivity extends AppCompatActivity {
         final WebSettings ajustesVisorWeb = miVisorWeb.getSettings();
         ajustesVisorWeb.setDomStorageEnabled(true);
         ajustesVisorWeb.setJavaScriptEnabled(true);
-
-//        if (savedInstanceState == null) {
-//            miVisorWeb.loadUrl(url);
-//        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-//        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
-//
-//        if (networkInfo != null && networkInfo.isConnected()) {
-//            if (savedInstanceState == null) {
-//                miVisorWeb.loadUrl(url);
-//            }
-//        } else {
-//            vig.setText("Dispositivo sin internet");
-//            spinner.setVisibility(View.VISIBLE);
-//            imag.setImageResource(R.drawable.no_internet);
-//        }
     }
 
-//??????
-    private BroadcastReceiver networkStateReceiver = new BroadcastReceiver() {
+    private final BroadcastReceiver networkStateReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             ConnectivityManager manager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-            NetworkInfo ni = manager.getActiveNetworkInfo();
-            onNetworkChange(ni);
+            NetworkInfo networkInfo = manager.getActiveNetworkInfo();
+            onNetworkChange(networkInfo);
         }
     };
 
@@ -106,26 +83,22 @@ public class MainActivity extends AppCompatActivity {
                 // CONNECTED
                 miVisorWeb.loadUrl(url);
             } else {
-                // DISCONNECTED"
+                // DISCONNECTED
                 vig.setText("Dispositivo sin internet");
                 spinner.setVisibility(View.VISIBLE);
                 imag.setImageResource(R.drawable.no_internet);
             }
-        }else {
-            // DISCONNECTED"
+        } else {
+            // DISCONNECTED
             Context context = getApplicationContext();
             CharSequence text = "Dispositivo sin internet";
             int duration = Toast.LENGTH_SHORT;
 
             Toast toast = Toast.makeText(context, text, duration);
             toast.show();
-     //       String msg;
- //           Log.i(TAG, msg:"Dispositivo sin internet")
             vig.setText("Compruebe la conexión");
-//            spinner.setVisibility(View.VISIBLE);
             imag.setImageResource(R.drawable.no_internet);
         }
-//..........
     }
 
     // This allows for a splash screen
@@ -138,6 +111,7 @@ public class MainActivity extends AppCompatActivity {
                 webview.setVisibility(webview.INVISIBLE);
             }
         }
+
         @Override
         public void onPageFinished(WebView view, String url) {
 
@@ -160,7 +134,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }, 2500);
 
-                    super.onPageFinished(view, url);
+            super.onPageFinished(view, url);
         }
     }
 
@@ -182,12 +156,12 @@ public class MainActivity extends AppCompatActivity {
         miVisorWeb = (WebView) findViewById(R.id.visorWeb);
         if (event.getAction() == KeyEvent.ACTION_DOWN) {
             if (keyCode == KeyEvent.KEYCODE_BACK) {
-                    if (miVisorWeb.canGoBack()) {
-                        miVisorWeb.goBack();
-                    } else {
-                        finish();
-                    }
-                    return true;
+                if (miVisorWeb.canGoBack()) {
+                    miVisorWeb.goBack();
+                } else {
+                    finish();
+                }
+                return true;
             }
         }
         return super.onKeyDown(keyCode, event);
